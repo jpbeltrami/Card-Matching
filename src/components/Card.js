@@ -1,10 +1,10 @@
 import React from "react";
 import "./Card.css"
 
-function Card() {
+function Card({ num }) {
   return (
     <div className={'card'}>
-      <h1>1</h1>
+      {num}
     </div>
   )
 }
