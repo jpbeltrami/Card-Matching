@@ -1,10 +1,12 @@
 import React from "react";
 import "./Card.css"
 
-function Card({ num }) {
+function Card(props) {
+  const { id, view, num, viewCard } = props;
+
   return (
-    <div className={'card'}>
-      {num}
+    <div className={'card'} onClick={cardId => { viewCard(id) }}>
+      {view && num}
     </div>
   )
 }
