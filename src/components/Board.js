@@ -1,49 +1,18 @@
-import React, { useState } from 'react';
-import Card from './Card'
+import React, { useState, useEffect } from 'react';
+import Card from './Card';
 import './Board.css';
+import cardDeck from '../cards.json';
 
-const initialNumbers = [
-  {
-    num: 1,
-    view: false,
-    found: false,
-  },
-  {
-    num: 2,
-    view: false,
-    found: false,
-  },
-  {
-    num: 3,
-    view: false,
-    found: false,
-  },
-  {
-    num: 4,
-    view: false,
-    found: false,
-  },
-  {
-    num: 5,
-    view: false,
-    found: false,
-  },
-  {
-    num: 6,
-    view: false,
-    found: false,
-  },
-  {
-    num: 7,
-    view: false,
-    found: false,
-  },
-  {
-    num: 8,
-    view: false,
-    found: false,
-  }
-];
+function startCards(arr) {
+  const randomNums = shuffle(arr.concat([...arr]))
+  const numsWithId = randomNums.map((card, index) => {
+    return {
+      ...card,
+      id: index
+    }
+  });
+  return numsWithId
+}
 
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -55,19 +24,14 @@ function shuffle(arr) {
   return arr;
 }
 
-const randomNums = shuffle(initialNumbers.concat([...initialNumbers]))
-const numsWithId = randomNums.map((card, index) => {
-  return {
-    ...card,
-    id: index
-  }
-});
+const initialDeck = startCards(cardDeck)
 
 function Board() {
-  const [numbers, setNumbers] = useState(numsWithId);
+  const [cards, setCards] = useState(initialDeck);
+  const [selectedCards, setSelectedCards] = useState([])
 
-  const viewCard = (cardId) => {
-    const newCards = numbers.map(card => {
+  const toggleCard = (cardId) => {
+    const newCards = cards.map(card => {
       if (card.id === cardId) {
         return {
           ...card,
@@ -77,14 +41,62 @@ function Board() {
         return card
       }
     })
-    setNumbers(newCards)
+    setCards(newCards);
+    if (!selectedCards.find(card => card.id === cardId)) {
+      selectedCards.push(newCards.find(card => card.id === cardId));
+      setSelectedCards(selectedCards);
+    }
+
   }
+
+  useEffect(() => {
+    // if two cards are open and not found
+    console.log(selectedCards)
+    if (selectedCards.length === 2) {
+      if (selectedCards[0]['num'] === selectedCards[1]['num']) {
+        const newCards = cards.map(card => {
+          if (card.id === selectedCards[0]['id'] || card.id === selectedCards[1]['id']) {
+            return {
+              ...card,
+              view: true,
+              found: true
+            }
+          } else {
+            return card
+          }
+        });
+        setSelectedCards([])
+        setCards(newCards);
+      }
+    } else if (selectedCards.length > 2) {
+      const thirdSelection = selectedCards[2]
+      const newCards = cards.map(card => {
+        if (card.id === thirdSelection.id) {
+          return {
+            ...card,
+            view: true
+          }
+        }
+        if (!card.found && card.view) {
+          return {
+            ...card,
+            view: false
+          }
+        }
+        return card
+      });
+      setSelectedCards([thirdSelection])
+      setCards(newCards);
+    }
+
+
+  }, [cards, selectedCards]);
 
   return (
     <div className={'board'}>
-      {numbers.map(card => {
+      {cards.map(card => {
         return (
-          <Card key={card.id} id={card.id} viewCard={viewCard} num={card.num} view={card.view} found={card.found} />
+          <Card key={card.id} toggleCard={toggleCard} card={card} />
         )
       })}
     </div >
