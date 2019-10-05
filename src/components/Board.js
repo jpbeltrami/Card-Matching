@@ -28,9 +28,17 @@ const initialDeck = startCards(cardDeck)
 
 function Board() {
   const [cards, setCards] = useState(initialDeck);
-  const [selectedCards, setSelectedCards] = useState([])
+  const [selectedCards, setSelectedCards] = useState([]);
+  const [complete, setComplete] = useState(false);
+
+  const reset = () => {
+    setCards(startCards(cardDeck));
+    setSelectedCards([]);
+    setComplete(false)
+  }
 
   const toggleCard = (cardId) => {
+
     const newCards = cards.map(card => {
       if (card.id === cardId) {
         return {
@@ -42,7 +50,10 @@ function Board() {
       }
     })
     setCards(newCards);
-    if (!selectedCards.find(card => card.id === cardId)) {
+    const currentCard = newCards.filter(card => card.id === cardId)
+
+    if (!selectedCards.find(card => card.id === cardId) && !currentCard[0]['found']) {
+
       selectedCards.push(newCards.find(card => card.id === cardId));
       setSelectedCards(selectedCards);
     }
@@ -89,6 +100,11 @@ function Board() {
       setCards(newCards);
     }
 
+    // check if all cards have been found
+    if (!cards.some(card => !card.found)) {
+      setComplete(true)
+    }
+
 
   }, [cards, selectedCards]);
 
@@ -99,6 +115,7 @@ function Board() {
           <Card key={card.id} toggleCard={toggleCard} card={card} />
         )
       })}
+      {complete && <button onClick={() => reset()}>Reset</button>}
     </div >
   )
 }
