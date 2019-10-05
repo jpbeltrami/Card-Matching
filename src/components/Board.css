@@ -6,3 +6,14 @@
   grid-auto-rows: 100px;
   grid-gap: 5px;
 }
+
+.reset-button {
+  font-size: 2em;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #ff6f69;
+  border: #ff6f69;
+  color: #ffeead;
+  flex: none;
+  align-self: baseline;
+}

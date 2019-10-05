@@ -48,12 +48,12 @@ function Board() {
       } else {
         return card
       }
-    })
+    });
+
     setCards(newCards);
     const currentCard = newCards.filter(card => card.id === cardId)
 
     if (!selectedCards.find(card => card.id === cardId) && !currentCard[0]['found']) {
-
       selectedCards.push(newCards.find(card => card.id === cardId));
       setSelectedCards(selectedCards);
     }
@@ -62,7 +62,6 @@ function Board() {
 
   useEffect(() => {
     // if two cards are open and not found
-    console.log(selectedCards)
     if (selectedCards.length === 2) {
       if (selectedCards[0]['num'] === selectedCards[1]['num']) {
         const newCards = cards.map(card => {
@@ -115,7 +114,7 @@ function Board() {
           <Card key={card.id} toggleCard={toggleCard} card={card} />
         )
       })}
-      {complete && <button onClick={() => reset()}>Reset</button>}
+      {complete && <button className={"reset-button"} onClick={() => reset()}>Reset</button>}
     </div >
   )
 }
